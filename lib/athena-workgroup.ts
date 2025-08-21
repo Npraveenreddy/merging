@@ -1,22 +1,21 @@
-import { Construct } from 'constructs';
-import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
+import * as athena from "aws-cdk-lib/aws-athena";
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
 
 export interface AthenaWorkgroupProps {
-  workGroupName: string;
-  resultBucket: string;
+  workgroupName: string;
+  resultsBucketName: string;   // <-- add this
 }
 
 export class AthenaWorkgroup extends Construct {
-  public readonly workgroup: CfnWorkGroup;
   constructor(scope: Construct, id: string, props: AthenaWorkgroupProps) {
     super(scope, id);
-    this.workgroup = new CfnWorkGroup(this, 'WorkGroup', {
-      name: props.workGroupName,
-      description: 'Workgroup for Athena demo',
-      state: 'ENABLED',
+
+    new athena.CfnWorkGroup(this, "AthenaWorkgroup", {
+      name: props.workgroupName,
       workGroupConfiguration: {
         resultConfiguration: {
-          outputLocation: `s3://${props.resultBucket}/athena-results/`
+          outputLocation: `s3://${props.resultsBucketName}/results/`,
         },
       },
     });
